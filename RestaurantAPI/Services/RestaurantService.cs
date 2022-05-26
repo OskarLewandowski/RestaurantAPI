@@ -10,7 +10,14 @@ using System.Threading.Tasks;
 
 namespace RestaurantAPI.Services
 {
-    public class RestaurantService
+    public interface IRestaurantService
+    {
+        void Create(CreateRestaurantDto restaurantDto);
+        IEnumerable<RestaurantDto> GetAll();
+        RestaurantDto GetById(int id);
+    }
+
+    public class RestaurantService : IRestaurantService
     {
         private readonly RestaurantDbContext _dbContext;
         private readonly IMapper _mapper;
