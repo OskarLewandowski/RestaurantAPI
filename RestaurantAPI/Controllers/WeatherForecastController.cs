@@ -20,22 +20,22 @@ namespace RestaurantAPI.Controllers
             _service = service;
         }
 
-        [HttpGet]
-        public IEnumerable<WeatherForecast> Get()
-        {
-            var result = _service.Get();
+        //[HttpGet]
+        //public IEnumerable<WeatherForecast> Get()
+        //{
+        //    var result = _service.Get();
 
-            return result;
-        }
+        //    return result;
+        //}
 
-        [HttpGet("currentDay/{max}")]
-        //[Route("currentDay")]
-        public IEnumerable<WeatherForecast> Get2([FromQuery] int take, [FromRoute] int max)
-        {
-            var result = _service.Get();
+        //[HttpGet("currentDay/{max}")]
+        ////[Route("currentDay")]
+        //public IEnumerable<WeatherForecast> Get2([FromQuery] int take, [FromRoute] int max)
+        //{
+        //    var result = _service.Get();
 
-            return result;
-        }
+        //    return result;
+        //}
 
         [HttpPost]
         public ActionResult<string> Hello([FromBody] string name)
@@ -44,6 +44,20 @@ namespace RestaurantAPI.Controllers
             //return StatusCode(401, $"Hello {name}");
 
             return NotFound($"Hello {name}");
+        }
+
+        [HttpPost("generate")]
+        public ActionResult<IEnumerable<WeatherForecast>> Generate([FromQuery] int take,
+            [FromBody] TemperatureRequestModel request)
+        {
+            if (take < 0 || request.Max < request.Min)
+            {
+                return BadRequest();
+            }
+
+            var result = _service.Get(take, request.Min, request.Max);
+
+            return Ok(result);
         }
 
         //[HttpPost]
