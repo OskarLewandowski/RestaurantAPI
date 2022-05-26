@@ -12,7 +12,7 @@ namespace RestaurantAPI.Services
 {
     public interface IRestaurantService
     {
-        void Create(CreateRestaurantDto restaurantDto);
+        int Create(CreateRestaurantDto restaurantDto);
         IEnumerable<RestaurantDto> GetAll();
         RestaurantDto GetById(int id);
     }
@@ -57,12 +57,14 @@ namespace RestaurantAPI.Services
             return restaurantsDtos;
         }
 
-        public void Create(CreateRestaurantDto restaurantDto)
+        public int Create(CreateRestaurantDto restaurantDto)
         {
             var newRestaurant = _mapper.Map<Restaurant>(restaurantDto);
 
             _dbContext.Restaurants.Add(newRestaurant);
             _dbContext.SaveChanges();
+
+            return newRestaurant.Id;
         }
 
     }
