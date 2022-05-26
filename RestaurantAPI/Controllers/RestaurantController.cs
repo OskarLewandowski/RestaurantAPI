@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RestaurantAPI.Entities;
+using RestaurantAPI.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,15 +20,17 @@ namespace RestaurantAPI.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<Restaurant>> GetAll()
+        public ActionResult<IEnumerable<RestaurantDto>> GetAll()
         {
             var restaurants = _dbContext.Restaurants.ToList();
+
+            //var restaurantsDtos =
 
             return Ok(restaurants);
         }
 
         [HttpGet("{id}")]
-        public ActionResult<Restaurant> Get([FromRoute] int id)
+        public ActionResult<RestaurantDto> Get([FromRoute] int id)
         {
             var restaurant = _dbContext.Restaurants.FirstOrDefault(r => r.Id == id);
 
