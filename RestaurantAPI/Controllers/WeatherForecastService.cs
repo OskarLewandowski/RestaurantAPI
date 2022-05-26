@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RestaurantAPI.Controllers
 {
-    public class WeatherForecastService
+    public class WeatherForecastService : IWeatherForecastService
     {
         private static readonly string[] Summaries = new[]
         {
