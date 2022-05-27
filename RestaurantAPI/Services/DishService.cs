@@ -31,12 +31,7 @@ namespace RestaurantAPI.Services
 
         public int Create(int restaurantId, CreateDishDto dishDto)
         {
-            var restaurant = _context.Restaurants.FirstOrDefault(x => x.Id == restaurantId);
-
-            if (restaurant == null)
-            {
-                throw new NotFoundException("Restaurant not found");
-            }
+            var restaurant = GetRestaurantById(restaurantId);
 
             var newDish = _mapper.Map<Dish>(dishDto);
 
@@ -50,12 +45,7 @@ namespace RestaurantAPI.Services
 
         public DishDto GetById(int restaurantId, int dishId)
         {
-            var restaurant = _context.Restaurants.FirstOrDefault(x => x.Id == restaurantId);
-
-            if (restaurant == null)
-            {
-                throw new NotFoundException("Restaurant not found");
-            }
+            var restaurant = GetRestaurantById(restaurantId);
 
             var dish = _context.Dishes.FirstOrDefault(x => x.Id == dishId);
 
@@ -71,6 +61,27 @@ namespace RestaurantAPI.Services
 
         public List<DishDto> GetAll(int restaurantId)
         {
+            var restaurant = GetRestaurantWithDishById(restaurantId);
+
+            var dishDtos = _mapper.Map<List<DishDto>>(restaurant.Dishes);
+
+            return dishDtos;
+        }
+
+        private Restaurant GetRestaurantById(int restaurantId)
+        {
+            var restaurant = _context.Restaurants.FirstOrDefault(x => x.Id == restaurantId);
+
+            if (restaurant == null)
+            {
+                throw new NotFoundException("Restaurant not found");
+            }
+
+            return restaurant;
+        }
+
+        private Restaurant GetRestaurantWithDishById(int restaurantId)
+        {
             var restaurant = _context.Restaurants
                 .Include(r => r.Dishes)
                 .FirstOrDefault(x => x.Id == restaurantId);
@@ -80,9 +91,7 @@ namespace RestaurantAPI.Services
                 throw new NotFoundException("Restaurant not found");
             }
 
-            var dishDtos = _mapper.Map<List<DishDto>>(restaurant.Dishes);
-
-            return dishDtos;
+            return restaurant;
         }
     }
 }
