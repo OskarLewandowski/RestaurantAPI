@@ -59,6 +59,12 @@ namespace RestaurantAPI
                 };
             });
 
+            services.AddAuthorization(options =>
+            {
+                //                                                                  name of claim ,  values what we want accept
+                options.AddPolicy("HasNationality", builder => builder.RequireClaim("Nationality", "German", "Polish"));
+            });
+
             services.AddControllers()
                 .AddJsonOptions(options =>
                 {
