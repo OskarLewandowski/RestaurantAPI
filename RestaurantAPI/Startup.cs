@@ -66,8 +66,11 @@ namespace RestaurantAPI
                 //                                                                  name of claim ,  values what we want accept
                 options.AddPolicy("HasNationality", builder => builder.RequireClaim("Nationality", "German", "Polish"));
                 options.AddPolicy("AtLeast20", builder => builder.AddRequirements(new MinimumAgeRequirement(20)));
+                options.AddPolicy("CreatedAtLeast2Restaurants",
+                    builder => builder.AddRequirements(new CreatedMultipleRestaurantsRequirement(2)));
             });
 
+            services.AddScoped<IAuthorizationHandler, CreatedMultipleRestaurantsRequirementHandler>();
             services.AddScoped<IAuthorizationHandler, MinimumAgeRequirementHandler>();
             services.AddScoped<IAuthorizationHandler, ResourceOperationRequirementHandler>();
             services.AddControllers()
