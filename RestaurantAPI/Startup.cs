@@ -108,6 +108,7 @@ namespace RestaurantAPI
 
             app.UseRouting();
 
+            //we need this there to use authorization
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
