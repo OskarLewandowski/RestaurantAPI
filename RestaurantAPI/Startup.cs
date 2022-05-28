@@ -69,6 +69,7 @@ namespace RestaurantAPI
             });
 
             services.AddScoped<IAuthorizationHandler, MinimumAgeRequirementHandler>();
+            services.AddScoped<IAuthorizationHandler, ResourceOperationRequirementHandler>();
             services.AddControllers()
                 .AddJsonOptions(options =>
                 {
