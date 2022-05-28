@@ -1,5 +1,6 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using RestaurantAPI.Authorization;
 using RestaurantAPI.Controllers;
 using RestaurantAPI.Entities;
 using RestaurantAPI.Middleware;
@@ -63,8 +65,10 @@ namespace RestaurantAPI
             {
                 //                                                                  name of claim ,  values what we want accept
                 options.AddPolicy("HasNationality", builder => builder.RequireClaim("Nationality", "German", "Polish"));
+                options.AddPolicy("AtLeast20", builder => builder.AddRequirements(new MinimumAgeRequirement(20)));
             });
 
+            services.AddScoped<IAuthorizationHandler, MinimumAgeRequirementHandler>();
             services.AddControllers()
                 .AddJsonOptions(options =>
                 {

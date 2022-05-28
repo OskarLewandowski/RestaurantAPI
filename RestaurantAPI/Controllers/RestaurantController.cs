@@ -42,7 +42,7 @@ namespace RestaurantAPI.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles ="Admin, Manager")]
+        [Authorize(Roles = "Admin, Manager")]
         public ActionResult CreateRestaurant([FromBody] CreateRestaurantDto restaurantDto)
         {
             var newRestaurantId = _restaurantService.Create(restaurantDto);
@@ -60,7 +60,7 @@ namespace RestaurantAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        [AllowAnonymous]
+        [Authorize(Policy = "AtLeast20")]
         public ActionResult<RestaurantDto> Get([FromRoute] int id)
         {
             var restaurant = _restaurantService.GetById(id);
