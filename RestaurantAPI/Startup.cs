@@ -111,6 +111,8 @@ namespace RestaurantAPI
         {
             //Middlewares
 
+            app.UseResponseCaching();
+
             app.UseStaticFiles();
 
             app.UseCors("PolicyNameFronEndApp");
