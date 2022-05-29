@@ -94,12 +94,24 @@ namespace RestaurantAPI
             services.AddScoped<IUserContextService, UserContextService>();
             services.AddHttpContextAccessor();
             services.AddSwaggerGen();
+            services.AddCors(options =>
+            {
+                options.AddPolicy("PolicyNameFrontEndApp", builder =>
+                {
+                    builder
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .WithOrigins(Configuration["AllowedOriginsFrontEndApp"]);
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, RestaurantSedder sedder)
         {
             //Middlewares
+
+            app.UseCors("PolicyNameFronEndApp");
 
             sedder.Seed();
 
