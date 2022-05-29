@@ -111,6 +111,8 @@ namespace RestaurantAPI
         {
             //Middlewares
 
+            app.UseStaticFiles();
+
             app.UseCors("PolicyNameFronEndApp");
 
             sedder.Seed();
