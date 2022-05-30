@@ -13,6 +13,7 @@ using System.Text;
 using NLog.Web;
 using RestaurantAPI;
 using System.Reflection;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder();
 
@@ -64,7 +65,9 @@ builder.Services.AddControllers()
     })
     .AddFluentValidation();
 
-builder.Services.AddDbContext<RestaurantDbContext>();
+builder.Services.AddDbContext<RestaurantDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("RestaurantDbConnection")));
+
 builder.Services.AddScoped<RestaurantSedder>();
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 builder.Services.AddScoped<IRestaurantService, RestaurantService>();

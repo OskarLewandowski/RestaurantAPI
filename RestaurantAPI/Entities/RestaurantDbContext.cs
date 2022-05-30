@@ -10,8 +10,10 @@ namespace RestaurantAPI.Entities
 {
     public class RestaurantDbContext : DbContext
     {
-        private string _connectionString =
-            "Server=(localdb)\\MSSQLLocalDB;Database=RestaurantDb;Trusted_Connection=True;";
+        public RestaurantDbContext(DbContextOptions<RestaurantDbContext> options) : base(options)
+        {
+
+        }
 
         public DbSet<Restaurant> Restaurants { get; set; }
         public DbSet<Address> Addresses { get; set; }
@@ -48,11 +50,5 @@ namespace RestaurantAPI.Entities
                 .Property(e => e.Name)
                 .IsRequired();
         }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlServer(_connectionString);
-        }
-
     }
 }
