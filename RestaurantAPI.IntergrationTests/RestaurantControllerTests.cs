@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Xunit;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.VisualStudio.TestPlatform.TestHost;
+using FluentAssertions;
 
 namespace RestaurantAPI.IntergrationTests
 {
@@ -16,7 +20,7 @@ namespace RestaurantAPI.IntergrationTests
         {
             //arrange
 
-            var factory = new WebApplicationFactory<Program>();
+            var factory = new WebApplicationFactory<Startup>();
             var client = factory.CreateClient();
 
             //act
@@ -33,13 +37,13 @@ namespace RestaurantAPI.IntergrationTests
         [InlineData(1, 55)]
         [InlineData(11, 30)]
         [InlineData(1, 155)]
-        [InlineData(null, 155)]
+        [InlineData(-1, 155)]
         [InlineData(0, 0)]
         public async void GetAll_WithInvalidQueryParameters_ReturnsBadRequest(int pageNumber, int pageSize)
         {
             //arrange
 
-            var factory = new WebApplicationFactory<Program>();
+            var factory = new WebApplicationFactory<Startup>();
             var client = factory.CreateClient();
 
             //act
