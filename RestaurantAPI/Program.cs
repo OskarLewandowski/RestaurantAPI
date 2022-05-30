@@ -14,6 +14,9 @@ using NLog.Web;
 using RestaurantAPI;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
+using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("RestaurantAPI.IntergrationTests")]
 
 var builder = WebApplication.CreateBuilder();
 
