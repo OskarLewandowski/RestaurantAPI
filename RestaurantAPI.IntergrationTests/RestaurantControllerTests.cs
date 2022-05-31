@@ -7,11 +7,19 @@ using Xunit;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.VisualStudio.TestPlatform.TestHost;
 using FluentAssertions;
+using System.Net.Http;
 
 namespace RestaurantAPI.IntergrationTests
 {
-    public class RestaurantControllerTests
+    public class RestaurantControllerTests : IClassFixture<WebApplicationFactory<Startup>>
     {
+        private readonly HttpClient _client;
+
+        public RestaurantControllerTests(WebApplicationFactory<Startup> factory)
+        {
+            _client = factory.CreateClient();
+        }
+
         [Theory]
         [InlineData(1, 5)]
         [InlineData(1, 10)]
@@ -21,12 +29,10 @@ namespace RestaurantAPI.IntergrationTests
         {
             //arrange
 
-            var factory = new WebApplicationFactory<Startup>();
-            var client = factory.CreateClient();
 
             //act
 
-            var response = await client.GetAsync($"/api/restaurant?pageNumber={pageNumber}&pageSize={pageSize}");
+            var response = await _client.GetAsync($"/api/restaurant?pageNumber={pageNumber}&pageSize={pageSize}");
 
             //assert
 
@@ -44,12 +50,10 @@ namespace RestaurantAPI.IntergrationTests
         {
             //arrange
 
-            var factory = new WebApplicationFactory<Startup>();
-            var client = factory.CreateClient();
 
             //act
 
-            var response = await client.GetAsync($"/api/restaurant?pageNumber={pageNumber}&pageSize={pageSize}");
+            var response = await _client.GetAsync($"/api/restaurant?pageNumber={pageNumber}&pageSize={pageSize}");
 
             //assert
 
