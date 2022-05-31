@@ -11,6 +11,9 @@ using System.Net.Http;
 using Microsoft.EntityFrameworkCore;
 using RestaurantAPI.Entities;
 using Microsoft.Extensions.DependencyInjection;
+using RestaurantAPI.Models;
+using Newtonsoft.Json;
+using Microsoft.AspNetCore.Authorization.Policy;
 
 namespace RestaurantAPI.IntergrationTests
 {
@@ -31,11 +34,40 @@ namespace RestaurantAPI.IntergrationTests
 
                         service.Remove(dbContextOptions);
 
+                        service.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
+                        service.AddMvc(option => option.Filters.Add(new FakeUserFilter()));
+
                         service.AddDbContext<RestaurantDbContext>(options =>
                             options.UseInMemoryDatabase("RestaurantDbInMemory"));
                     });
                 })
                 .CreateClient();
+        }
+
+        [Fact]
+        public async Task CreateRestaurant_WithValidModel_ReturnsCreatedStatus()
+        {
+            //arrange
+
+            var model = new CreateRestaurantDto()
+            {
+                Name = "TestRestaurant",
+                City = "Poznań",
+                Street = "Korek 13"
+            };
+
+            var json = JsonConvert.SerializeObject(model);
+
+            var httpContent = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
+
+            //act
+
+            var response = await _client.PostAsync("/api/restaurant", httpContent);
+
+            //asserts
+
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.Created);
+            response.Headers.Location.Should().NotBeNull();
         }
 
         [Theory]
