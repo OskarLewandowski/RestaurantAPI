@@ -16,7 +16,8 @@ namespace RestaurantAPI.IntergrationTests
         [InlineData(1, 5)]
         [InlineData(1, 10)]
         [InlineData(1, 15)]
-        public async void GetAll_WithQueryParameters_ReturnsOkResult(int pageNumber, int pageSize)
+        [InlineData(2, 5)]
+        public async Task GetAll_WithQueryParameters_ReturnsOkResult(int pageNumber, int pageSize)
         {
             //arrange
 
@@ -39,7 +40,7 @@ namespace RestaurantAPI.IntergrationTests
         [InlineData(1, 155)]
         [InlineData(-1, 155)]
         [InlineData(0, 0)]
-        public async void GetAll_WithInvalidQueryParameters_ReturnsBadRequest(int pageNumber, int pageSize)
+        public async Task GetAll_WithInvalidQueryParameters_ReturnsBadRequest(int pageNumber, int pageSize)
         {
             //arrange
 
