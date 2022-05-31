@@ -21,10 +21,11 @@ namespace RestaurantAPI.IntergrationTests
     public class RestaurantControllerTests : IClassFixture<WebApplicationFactory<Startup>>
     {
         private readonly HttpClient _client;
+        private readonly WebApplicationFactory<Startup> _factory;
 
         public RestaurantControllerTests(WebApplicationFactory<Startup> factory)
         {
-            _client = factory
+            _factory = factory
                 .WithWebHostBuilder(builder =>
                 {
                     builder.ConfigureServices(service =>
@@ -41,8 +42,70 @@ namespace RestaurantAPI.IntergrationTests
                         service.AddDbContext<RestaurantDbContext>(options =>
                             options.UseInMemoryDatabase("RestaurantDbInMemory"));
                     });
-                })
-                .CreateClient();
+                });
+
+            _client = _factory.CreateClient();
+        }
+
+        [Fact]
+        public async Task Delete_ForNonRestaurantOwner_ReturnsForbidden()
+        {
+            //arrange
+
+            var restaurant = new Restaurant()
+            {
+                CreatedById = 900
+            };
+
+            //seed
+
+            SeedRestaurant(restaurant);
+
+            //act
+
+            var response = await _client.DeleteAsync($"/api/restaurant/{restaurant.Id}");
+
+            //asserts
+
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.Forbidden);
+        }
+
+        [Fact]
+        public async Task Delete_ForRestaurantOwner_ReturnsNoContent()
+        {
+            //arrange
+
+            var restaurant = new Restaurant()
+            {
+                CreatedById = 1,
+                Name = "Test restaurant"
+            };
+
+            //seed
+
+            SeedRestaurant(restaurant);
+
+            //act
+
+            var response = await _client.DeleteAsync($"/api/restaurant/{restaurant.Id}");
+
+            //asserts
+
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.NoContent);
+        }
+
+        [Fact]
+        public async Task Delete_ForNonExistingRestaurant_ReturnsNotFound()
+        {
+            //arrange
+
+            //act
+
+            var response = await _client.DeleteAsync("/api/restaurant/999");
+
+            //asserts
+
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
         }
 
         [Fact]
@@ -130,6 +193,17 @@ namespace RestaurantAPI.IntergrationTests
             //assert
 
             response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+        }
+
+        private void SeedRestaurant(Restaurant restaurant)
+        {
+            //seed
+            var scopeFactory = _factory.Services.GetService<IServiceScopeFactory>();
+            using var scope = scopeFactory.CreateScope();
+            var _dbContex = scope.ServiceProvider.GetService<RestaurantDbContext>();
+
+            _dbContex.Restaurants.Add(restaurant);
+            _dbContex.SaveChanges();
         }
     }
 }
