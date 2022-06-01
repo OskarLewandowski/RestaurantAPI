@@ -46,6 +46,51 @@ namespace RestaurantAPI.IntergrationTests
             _client = _factory.CreateClient();
         }
 
+        [Theory]
+        [InlineData(0, 0)]
+        [InlineData(0, 1)]
+        [InlineData(0, 2)]
+        [InlineData(1, 0)]
+        [InlineData(1, 1)]
+        [InlineData(1, 2)]
+        [InlineData(1, 3)]
+        public async Task GetById_WithValidQueryParameters_ReturnsOkResult(int restaurantNumber, int dishNumber)
+        {
+            //arrange
+            var restaurantsWithDishes = DataToSeedRestaurantWithDishes();
+            SeedRestaurantWithDishes(restaurantsWithDishes);
+
+            var restaurantsList = restaurantsWithDishes.ToList();
+            var restaurant = restaurantsList[restaurantNumber];
+            var restaurantId = restaurant.Id;
+
+            var restaurantDishesList = restaurant.Dishes.ToList();
+            var dish = restaurantDishesList[dishNumber];
+            var dishId = dish.Id;
+
+            //act
+
+            var response = await _client.GetAsync($"/api/restaurant/{restaurantId}/dish/{dishId}");
+
+            //assert
+
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+        }
+
+        [Fact]
+        public async Task GetById_WithInvalidQueryParameters_ReturnsNoFoundResult()
+        {
+            //arrange
+
+            //act
+
+            var response = await _client.GetAsync($"/api/restaurant/1/dish/9999");
+
+            //assert
+
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+        }
+
         [Fact]
         public async Task Delete_ForRestaurantOwner_ReturnsNoContent()
         {
