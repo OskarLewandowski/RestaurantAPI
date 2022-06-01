@@ -46,6 +46,61 @@ namespace RestaurantAPI.IntergrationTests
             _client = _factory.CreateClient();
         }
 
+
+        [Fact]
+        public async Task DeleteById_ForRestaurantOwner_ReturnsNoContent()
+        {
+            //arrange
+
+            var restaurantsWithDishes = DataToSeedRestaurantWithDishes();
+            SeedRestaurantWithDishes(restaurantsWithDishes);
+
+            var restaurantsList = restaurantsWithDishes.ToList();
+            var restaurant = restaurantsList[0];
+            var restaurantId = restaurant.Id;
+
+            var restaurantDishesList = restaurant.Dishes.ToList();
+            var dish = restaurantDishesList[0];
+            var dishId = dish.Id;
+
+            //act
+
+            var response = await _client.DeleteAsync($"/api/restaurant/{restaurantId}/dish/{dishId}");
+
+            //asserts
+
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.NoContent);
+        }
+
+        [Fact]
+        public async Task DeleteById_ForNonRestaurantOwner_ReturnsNotFound()
+        {
+            //arrange
+
+            var restaurantsWithDishes = DataToSeedRestaurantWithDishes();
+            SeedRestaurantWithDishes(restaurantsWithDishes);
+
+            var restaurantsList = restaurantsWithDishes.ToList();
+
+            //restaurant one
+            var restaurantOne = restaurantsList[0];
+            var restaurantId = restaurantOne.Id;
+
+            //restaurant two
+            var restaurantTwo = restaurantsList[1];
+            var restaurantDishesList = restaurantTwo.Dishes.ToList();
+            var dish = restaurantDishesList[0];
+            var dishId = dish.Id;
+
+            //act
+
+            var response = await _client.DeleteAsync($"/api/restaurant/{restaurantId}/dish/{dishId}");
+
+            //asserts
+
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+        }
+
         [Theory]
         [InlineData(0, 0)]
         [InlineData(0, 1)]
