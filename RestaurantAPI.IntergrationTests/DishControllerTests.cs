@@ -11,6 +11,8 @@ using Microsoft.EntityFrameworkCore;
 using RestaurantAPI.Entities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authorization.Policy;
+using RestaurantAPI.Models;
+using RestaurantAPI.IntergrationTests.Helpers;
 
 namespace RestaurantAPI.IntergrationTests
 {
@@ -42,6 +44,50 @@ namespace RestaurantAPI.IntergrationTests
                 });
 
             _client = _factory.CreateClient();
+        }
+
+        [Fact]
+        public async Task CreateDish_WithValidModel_ReturnsCreatedStatus()
+        {
+            //arrange
+
+            var model = new DishDto()
+            {
+                Name = "test value",
+                Description = "test",
+                Price = 1234,
+            };
+
+            var httpContent = model.ToJsonHttpContent();
+
+            //act
+            var response = await _client.PostAsync($"/api/restaurant/1/dish/", httpContent);
+
+            //assert
+
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.Created);
+            response.Headers.Location.Should().NotBeNull();
+        }
+
+        [Fact]
+        public async Task CreateDish_WithInvalidModel_ReturnsBadRequest()
+        {
+            //arrange
+
+            var model = new DishDto()
+            {
+                Description = "test",
+                Price = 1234,
+            };
+
+            var httpContent = model.ToJsonHttpContent();
+
+            //act
+            var response = await _client.PostAsync($"/api/restaurant/1/dish/", httpContent);
+
+            //assert
+
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
         }
 
         [Theory]
