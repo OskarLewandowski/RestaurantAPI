@@ -47,6 +47,41 @@ namespace RestaurantAPI.IntergrationTests
         }
 
         [Fact]
+        public async Task Delete_ForRestaurantOwner_ReturnsNoContent()
+        {
+            //arrange
+
+            //seed
+            var restaurantsWithDishes = DataToSeedRestaurantWithDishes();
+            SeedRestaurantWithDishes(restaurantsWithDishes);
+
+            var restaurantList = restaurantsWithDishes.ToList();
+            var restaurantId = restaurantList[0].Id;
+
+            //act
+
+            var response = await _client.DeleteAsync($"/api/restaurant/{restaurantId}");
+
+            //asserts
+
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.NoContent);
+        }
+
+        [Fact]
+        public async Task Delete_ForNonExistingRestaurant_ReturnsNotFound()
+        {
+            //arrange
+
+            //act
+
+            var response = await _client.DeleteAsync("/api/restaurant/999");
+
+            //asserts
+
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+        }
+
+        [Fact]
         public async Task CreateDish_WithValidModel_ReturnsCreatedStatus()
         {
             //arrange
